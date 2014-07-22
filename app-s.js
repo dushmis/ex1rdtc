@@ -34,12 +34,12 @@ var ProductRow = React.createClass({displayName: 'ProductRow',
     render: function() {
         var name = this.props.product.stocked ?
             this.props.product.name :
-            React.DOM.span({style: {color: 'red'}}, 
+            React.DOM.span({style: {color: 'red'}},
                 this.props.product.name
             );
         return (
-            React.DOM.tr(null, 
-                React.DOM.td(null, name), 
+            React.DOM.tr(null,
+                React.DOM.td(null, name),
                 React.DOM.td(null, this.props.product.price)
             )
         );
@@ -70,13 +70,13 @@ var PostLi = React.createClass({displayName: 'PostLi',
     }
     var mydate=new Date(bata.data.created*1000).toDateString();
     return (
-      React.DOM.li({className: "post", id: bata.data.id}, 
-        React.DOM.div({className: "regular content"}, 
-          React.DOM.h3(null, bata.data.title), 
-            React.DOM.div({className: "content regular_body"}, 
-              React.DOM.p(null, React.DOM.span(null, bata.data.selftext))
+      React.DOM.li({className: "post", id: bata.data.id},
+        React.DOM.div({className: "regular content"},
+          React.DOM.h3(null, bata.data.title),
+            React.DOM.div({className: "content regular_body"},
+              React.DOM.img({className: "photo_img", src: bata.data.url})
             )
-        ), 
+        ),
         PostFoot({dt: mydate, url: bata.data.url})
       )
     );
@@ -86,7 +86,7 @@ var PostLi = React.createClass({displayName: 'PostLi',
 
 
 var MainUL = React.createClass({displayName: 'MainUL',
-  
+
   render: function(){
     console.log(this.props.products);
     var rows = [];
@@ -116,13 +116,13 @@ var ProductTable = React.createClass({displayName: 'ProductTable',
             lastCategory = product.category;
         }.bind(this));
         return (
-            React.DOM.table(null, 
-                React.DOM.thead(null, 
-                    React.DOM.tr(null, 
-                        React.DOM.th(null, "Name"), 
+            React.DOM.table(null,
+                React.DOM.thead(null,
+                    React.DOM.tr(null,
+                        React.DOM.th(null, "Name"),
                         React.DOM.th(null, "Price")
                     )
-                ), 
+                ),
                 React.DOM.tbody(null, rows)
             )
         );
@@ -132,10 +132,10 @@ var ProductTable = React.createClass({displayName: 'ProductTable',
 var SearchBar = React.createClass({displayName: 'SearchBar',
     render: function() {
         return (
-            React.DOM.form({onSubmit: this.handleSubmit}, 
-                React.DOM.input({type: "text", placeholder: "Search...", value: this.props.filterText}), 
-                React.DOM.p(null, 
-                    React.DOM.input({type: "checkbox", value: this.props.inStockOnly}), 
+            React.DOM.form({onSubmit: this.handleSubmit},
+                React.DOM.input({type: "text", placeholder: "Search...", value: this.props.filterText}),
+                React.DOM.p(null,
+                    React.DOM.input({type: "checkbox", value: this.props.inStockOnly}),
                     "Only show products in stock"
                 )
             )
@@ -153,14 +153,14 @@ var FilterableProductTable = React.createClass({displayName: 'FilterableProductT
 
     render: function() {
         return (
-            React.DOM.div(null, 
+            React.DOM.div(null,
                 SearchBar({
-                    filterText: this.state.filterText, 
+                    filterText: this.state.filterText,
                     inStockOnly: this.state.inStockOnly}
-                ), 
+                ),
                 ProductTable({
-                    products: this.props.products, 
-                    filterText: this.state.filterText, 
+                    products: this.props.products,
+                    filterText: this.state.filterText,
                     inStockOnly: this.state.inStockOnly}
                 )
             )
@@ -169,7 +169,7 @@ var FilterableProductTable = React.createClass({displayName: 'FilterableProductT
 });
 
 var rj=new Rj();
-rj.makeRequest("GET","http://www.reddit.com/r/pics/.json?limit=50",function(x,y){
+rj.makeRequest("GET","http://www.reddit.com/r/pics/.json?limit=5",function(x,y){
   var chil=x.data.children;
   console.log(chil);
   React.renderComponent(MainUL({products: chil}), document.body);

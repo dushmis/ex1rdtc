@@ -74,7 +74,7 @@ var PostLi = React.createClass({
         <div className="regular content">
           <h3>{bata.data.title}</h3>
             <div className="content regular_body">
-              <p><span>{bata.data.selftext}</span></p>
+              <img className="photo_img" src={bata.data.url} />
             </div>
         </div>
         <PostFoot dt={mydate} url={bata.data.url}/>
@@ -86,7 +86,7 @@ var PostLi = React.createClass({
 
 
 var MainUL = React.createClass({
-  
+
   render: function(){
     console.log(this.props.products);
     var rows = [];
@@ -169,7 +169,7 @@ var FilterableProductTable = React.createClass({
 });
 
 var rj=new Rj();
-rj.makeRequest("GET","http://www.reddit.com/r/pics/.json?limit=50",function(x,y){
+rj.makeRequest("GET","http://www.reddit.com/r/eyes/.json?limit=5",function(x,y){
   var chil=x.data.children;
   console.log(chil);
   React.renderComponent(<MainUL products={chil}/>, document.body);
@@ -183,5 +183,3 @@ var PRODUCTS = [
   {category: 'Electronics', price: '$399.99', stocked: false, name: 'iPhone 5'},
   {category: 'Electronics', price: '$199.99', stocked: true, name: 'Nexus 7'}
 ];
-
-
