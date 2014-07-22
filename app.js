@@ -48,41 +48,54 @@ var ProductRow = React.createClass({
 
 var PostFoot=React.createClass({
   render:function(){
-    return (<div className="date"><a href="#">2 seconds ago</a></div>);
+    return (<div className="date"><a href={this.props.url}>{this.props.dt}</a></div>);
   }
 });
 
 //
-var PostDivBody = React.createClass({
-  render : function(){
-    return (<div className="regular_body"><p>body...</p></div>);
-  }
-});
-
-var Posth3=React.createClass({
-  render:function(){
-    return (<h3>HEADDDD<PostDivBody/></h3>);
-  }
-});
 
 
-var PostDiv = React.createClass({
-  render : function(){
-    return (<div className="regular content"><Posth3/></div>);
-  }
-});
+
+
+
+
 
 var PostLi = React.createClass({
   render: function(){
-    return (<li className="post" id="post_92453599242"><PostDiv/><PostFoot/></li>);
+    var bata=this.props.rowsall;
+    if(bata.data.media_embed){
+      console.log(bata.data.media);
+    }else{
+      console.log("0---");
+    }
+    var mydate=new Date(bata.data.created*1000).toDateString();
+    return (
+      <li className="post" id={bata.data.id}>
+        <div className="regular content">
+          <h3>{bata.data.title}</h3>
+            <div className="content regular_body">
+              <p><span>{bata.data.selftext}</span></p>
+            </div>
+        </div>
+        <PostFoot dt={mydate} url={bata.data.url}/>
+      </li>
+    );
   }
 });
 
 
 
 var MainUL = React.createClass({
+  
   render: function(){
-    return (<ul id="posts"><PostLi/></ul>);
+    console.log(this.props.products);
+    var rows = [];
+    this.props.products.forEach(function(product) {
+      rows.push(<PostLi rowsall={product} key={product.data.created}/>);
+    });
+    return (
+      <ul id="posts">{rows}</ul>
+    );
   }
 });
 
@@ -155,6 +168,12 @@ var FilterableProductTable = React.createClass({
     }
 });
 
+var rj=new Rj();
+rj.makeRequest("GET","http://www.reddit.com/r/pics/.json?limit=50",function(x,y){
+  var chil=x.data.children;
+  console.log(chil);
+  React.renderComponent(<MainUL products={chil}/>, document.body);
+});
 
 var PRODUCTS = [
   {category: 'Sporting Goods', price: '$49.99', stocked: true, name: 'Football'},
@@ -165,4 +184,4 @@ var PRODUCTS = [
   {category: 'Electronics', price: '$199.99', stocked: true, name: 'Nexus 7'}
 ];
 
-React.renderComponent(<MainUL/>, document.body);
+

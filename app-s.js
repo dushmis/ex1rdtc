@@ -48,41 +48,54 @@ var ProductRow = React.createClass({displayName: 'ProductRow',
 
 var PostFoot=React.createClass({displayName: 'PostFoot',
   render:function(){
-    return (React.DOM.div({className: "date"}, React.DOM.a({href: "#"}, "2 seconds ago")));
+    return (React.DOM.div({className: "date"}, React.DOM.a({href: this.props.url}, this.props.dt)));
   }
 });
 
 //
-var PostDivBody = React.createClass({displayName: 'PostDivBody',
-  render : function(){
-    return (React.DOM.div({className: "regular_body"}, React.DOM.p(null, "body...")));
-  }
-});
-
-var Posth3=React.createClass({displayName: 'Posth3',
-  render:function(){
-    return (React.DOM.h3(null, "HEADDDD", PostDivBody(null)));
-  }
-});
 
 
-var PostDiv = React.createClass({displayName: 'PostDiv',
-  render : function(){
-    return (React.DOM.div({className: "regular content"}, Posth3(null)));
-  }
-});
+
+
+
+
 
 var PostLi = React.createClass({displayName: 'PostLi',
   render: function(){
-    return (React.DOM.li({className: "post", id: "post_92453599242"}, PostDiv(null), PostFoot(null)));
+    var bata=this.props.rowsall;
+    if(bata.data.media_embed){
+      console.log(bata.data.media);
+    }else{
+      console.log("0---");
+    }
+    var mydate=new Date(bata.data.created*1000).toDateString();
+    return (
+      React.DOM.li({className: "post", id: bata.data.id}, 
+        React.DOM.div({className: "regular content"}, 
+          React.DOM.h3(null, bata.data.title), 
+            React.DOM.div({className: "content regular_body"}, 
+              React.DOM.p(null, React.DOM.span(null, bata.data.selftext))
+            )
+        ), 
+        PostFoot({dt: mydate, url: bata.data.url})
+      )
+    );
   }
 });
 
 
 
 var MainUL = React.createClass({displayName: 'MainUL',
+  
   render: function(){
-    return (React.DOM.ul({id: "posts"}, PostLi(null)));
+    console.log(this.props.products);
+    var rows = [];
+    this.props.products.forEach(function(product) {
+      rows.push(PostLi({rowsall: product, key: product.data.created}));
+    });
+    return (
+      React.DOM.ul({id: "posts"}, rows)
+    );
   }
 });
 
@@ -155,6 +168,12 @@ var FilterableProductTable = React.createClass({displayName: 'FilterableProductT
     }
 });
 
+var rj=new Rj();
+rj.makeRequest("GET","http://www.reddit.com/r/pics/.json?limit=50",function(x,y){
+  var chil=x.data.children;
+  console.log(chil);
+  React.renderComponent(MainUL({products: chil}), document.body);
+});
 
 var PRODUCTS = [
   {category: 'Sporting Goods', price: '$49.99', stocked: true, name: 'Football'},
@@ -164,5 +183,3 @@ var PRODUCTS = [
   {category: 'Electronics', price: '$399.99', stocked: false, name: 'iPhone 5'},
   {category: 'Electronics', price: '$199.99', stocked: true, name: 'Nexus 7'}
 ];
-
-React.renderComponent(MainUL(null), document.body);
