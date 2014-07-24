@@ -2,13 +2,16 @@
 <html ng-app="httpExample">
 <head>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.16/angular.min.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=PT+Serif:400,400italic' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Merriweather:400,300italic' rel='stylesheet' type='text/css'>
   <style>
-    li{
-      display: block;
-background-color: rgba(201, 214, 207, 0.6);
-padding: 10px;
-margin: 5px;
-border: 0;
+li{
+  display: block;
+  /*background-color: rgba(201, 214, 207, 0.6);*/
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  padding: 10px;
+  margin: 5px;
 	font-size: 100%;
 	font-family: inherit;
 	text-decoration: none;
@@ -18,16 +21,18 @@ border: 0;
 	margin: 02px;
 	padding: 5px;
 	cursor: default;
-	text-shadow: 0px 0px 2px #206040;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	-border-radius: 3px;
+	/*text-shadow: 0px 0px 2px #206040;*/
 	position: relative;
 	letter-spacing: 2px;
-	
+color: #222;
+font: 400 14px/18px "Merriweather";
+text-indent: 14px;
+/*font-family: 'Merriweather', serif;*/
+
+text-indent: 14px;
 }
 li:hover{
-  background-color: rgba(10, 110, 100, 0.6);
+  background-color: rgba(250, 250, 153, 0.1);
 }
 p.headline{
   padding:1px 20px 1px 20px
@@ -38,14 +43,15 @@ ul{
 </style>
       
 </head>
+
 <body>
   <div id="container" ng-controller="FetchController">
-    <input type="text" ng-model="ttextt" />
-    <button id="xx" ng-click="fetch();predicate = 'ups';">bcc</button>
+    <!-- <input type="text" ng-model="ttextt" />
+    <button id="xx" ng-click="fetch();predicate = 'created';">bcc</button> -->
     <ul id="posts">
-      <li class="post" id="{{child.name}}"  ng-repeat="child in data | orderBy:predicate:true">
+      <li class="post" id="{{child.name}}"  ng-repeat="child in data | orderBy:predicate:ascorder">
         <div class="photo content">
-          <div class="caption"><p class="headline">{{child.title}} - {{ child.author }} [ <a href="{{ child.url }}" target="_blank">link</a> ] - votes {{ child.ups }}</p></div>
+          <div class="caption"><p class="headline">{{child.title}} [ <a href="{{ child.url }}" target="_blank">link</a> ] </p></div>
         </div>
 
       </li>
@@ -53,10 +59,13 @@ ul{
   </div>
 
   <script>
-  angular.module('httpExample', []).controller('FetchController', ['$scope', '$http', '$templateCache','$interval',
-  function($scope, $http, $templateCache, $interval) {
+  angular.module('httpExample', []).controller('FetchController', ['$scope', '$http', '$templateCache','$interval','$timeout',
+  function($scope, $http, $templateCache, $interval,$timeout) {
     $scope.method = 'GET';
     $scope.url = 'http://www.reddit.com/r/news/.json?limit=5';
+    $scope.ttextt="news";
+    $scope.predicate="ups";
+    $scope.ascorder=true;
     
 
     $scope.fetch = function() {
@@ -83,10 +92,17 @@ ul{
       });
     };
     
-    /*stop=$interval(function(){
+    stop=$interval(function(){
       $scope.fetch();
-    },1000);
-    console.log(stop);*/
+    },30000);
+    console.log(stop);
+
+    stop_timeout=$timeout(function(){
+      $scope.fetch();
+      console.log("timeout executed");
+    },100);
+
+
 
     $scope.updateModel = function(method, url) {
       $scope.method = method;
