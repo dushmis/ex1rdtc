@@ -1,185 +1,135 @@
-/** @jsx React.DOM */
+angular.module('components', [])
+  .directive('tabs', function() {
+    return {
+      restrict: 'E',
+      transclude: true,
+      scope: {},
+      controller: function($scope, $element) {
+        var panes = $scope.panes = [];
 
-function Rj() {};
+        $scope.select = function(pane) {
+          angular.forEach(panes, function(pane) {
+            pane.selected = false;
+          });
+          pane.selected = true;
+        }
 
-var Util = Util || {};
+        this.addPane = function(pane) {
+          if (panes.length == 0) $scope.select(pane);
+          panes.push(pane);
+        }
+      },
+      template:
+        '<div class="tabbable">' +
+          '<ul class="nav nav-tabs">' +
+            '<li ng-repeat="pane in panes" ng-class="{active:pane.selected}">'+
+              '<a href="" ng-click="select(pane)">{{pane.title}}</a>' +
+            '</li>' +
+          '</ul>' +
+          '<div class="tab-content" ng-transclude></div>' +
+        '</div>',
+      replace: true
+    };
+  })
 
-Util.toArray = function(list) {
-  return Array.prototype.slice.call(list || [], 0);
-};
+  .directive('pane', function() {
+    return {
+      require: '^tabs',
+      restrict: 'E',
+      transclude: true,
+      scope: { title: '@' },
+      link: function(scope, element, attrs, tabsCtrl) {
+        tabsCtrl.addPane(scope);
+      },
+      template:
+        '<div class="tab-pane" ng-class="{active: selected}" ng-transclude>' +
+        '</div>',
+      replace: true
+    };
+  });
 
-Rj.prototype.makeRequest = function(method, url, callback) {
-  var xhr = new XMLHttpRequest();
-  xhr.open(method, url, true);
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4) {
-      var resp = JSON.parse(xhr.responseText);
-      callback(resp,this);
-    }
-  }
-  xhr.send(null);
-};
+angular.module("app", ["components"]).controller("NewsController", function($scope, $http, $templateCache, $interval, $timeout) {
+  
+  $scope.fetch = function(scdata) {
+    console.log(scdata);
+    $scope.method = "GET";
+    $scope.source = scdata.source;
+    $scope.predicate = scdata.predicate;
+    $scope.ascorder = scdata.ascorder;
 
+    var rows_news = [];
 
-
-/** @jsx React.DOM */
-
-var ProductCategoryRow = React.createClass({
-    render: function() {
-        return (<tr><th colSpan="2">{this.props.category}</th></tr>);
-    }
-});
-
-var ProductRow = React.createClass({
-    render: function() {
-        var name = this.props.product.stocked ?
-            this.props.product.name :
-            <span style={{color: 'red'}}>
-                {this.props.product.name}
-            </span>;
-        return (
-            <tr>
-                <td>{name}</td>
-                <td>{this.props.product.price}</td>
-            </tr>
-        );
-    }
-});
-
-var PostFoot=React.createClass({
-  render:function(){
-    return (<div className="date"><a href={this.props.url}>{this.props.dt}</a></div>);
-  }
-});
-
-//
-
-
-
-
-
-
-
-var PostLi = React.createClass({
-  render: function(){
-    var bata=this.props.rowsall;
-    if(bata.data.media_embed){
-      console.log(bata.data.media);
-    }else{
-      console.log("0---");
-    }
-    var mydate=new Date(bata.data.created*1000).toDateString();
-    return (
-      <li className="post" id={bata.data.id}>
-        <div className="regular content">
-          <h3>{bata.data.title}</h3>
-            <div className="content regular_body">
-              <img className="photo_img" src={bata.data.url} />
-            </div>
-        </div>
-        <PostFoot dt={mydate} url={bata.data.url}/>
-      </li>
-    );
-  }
-});
-
-
-
-var MainUL = React.createClass({
-
-  render: function(){
-    console.log(this.props.products);
-    var rows = [];
-    this.props.products.forEach(function(product) {
-      rows.push(<PostLi rowsall={product} key={product.data.created}/>);
+    $scope.url = "http://www.reddit.com/r/" + $scope.source + "/.json?limit=20";
+    $scope.code = null;
+    $scope.response = null;
+    $http({method:$scope.method, url:$scope.url, cache:$templateCache}).success(function(data, status) {
+      $scope.status = status;
+      data.data.children.forEach(function(a, b) {
+        rows_news.push(a.data);
+      });
+      $scope.allnews = rows_news;
+    }).error(function(data, status) {
+      $scope.allnews = data || "Request failed";
+      $scope.allbreakingnews = data || "Request failed";
+      $scope.status = status;
     });
-    return (
-      <ul id="posts">{rows}</ul>
-    );
-  }
+  };
+  stop = $interval(function() {
+    $scope.fetch({
+      "source":"worldnews+news",
+      "predicate":"ups",
+      "ascorder":true
+    });
+  }, 3E4);
+  console.log(stop);
+  stop_timeout = $timeout(function() {
+    $scope.fetch({
+      "source":"worldnews+news",
+      "predicate":"ups",
+      "ascorder":true
+    });
+  }, 100);
+}).controller("BreakingNewsController", function($scope, $http, $templateCache, $interval, $timeout) {
+  
+  $scope.fetch = function(scdata) {
+    console.log(scdata);
+    $scope.method = "GET";
+    $scope.source = scdata.source;
+    $scope.predicate = scdata.predicate;
+    $scope.ascorder = scdata.ascorder;
+
+    var rows_breakingnews = [];
+    $scope.url = "http://www.reddit.com/r/" + $scope.source + "/.json?limit=20";
+    $scope.code = null;
+    $scope.response = null;
+    $http({method:$scope.method, url:$scope.url, cache:$templateCache}).success(function(data, status) {
+      $scope.status = status;
+      data.data.children.forEach(function(a, b) {
+        rows_breakingnews.push(a.data);
+      });
+      console.log(rows_breakingnews);
+      $scope.allbreakingnews = rows_breakingnews;
+    }).error(function(data, status) {
+      $scope.allnews = data || "Request failed";
+      $scope.allbreakingnews = data || "Request failed";
+      $scope.status = status;
+    });
+  };
+  stop = $interval(function() {
+    $scope.fetch({
+      "source":"breakingnews",
+      "predicate":"created",
+      "ascorder":true
+    });
+  }, 3E4);
+  console.log(stop);
+  stop_timeout = $timeout(function() {
+    $scope.fetch({
+      "source":"breakingnews",
+      "predicate":"created",
+      "ascorder":true
+    });
+  }, 100);
 });
 
 
-
-var ProductTable = React.createClass({
-    render: function() {
-        var rows = [];
-        var lastCategory = null;
-        this.props.products.forEach(function(product) {
-            if (product.name.indexOf(this.props.filterText) === -1 || (!product.stocked && this.props.inStockOnly)) {
-                return;
-            }
-            if (product.category !== lastCategory) {
-                rows.push(<ProductCategoryRow category={product.category} key={product.category} />);
-            }
-            rows.push(<ProductRow product={product} key={product.name} />);
-            lastCategory = product.category;
-        }.bind(this));
-        return (
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>{rows}</tbody>
-            </table>
-        );
-    }
-});
-
-var SearchBar = React.createClass({
-    render: function() {
-        return (
-            <form onSubmit={this.handleSubmit}>
-                <input type="text" placeholder="Search..." value={this.props.filterText} />
-                <p>
-                    <input type="checkbox" value={this.props.inStockOnly} />
-                    Only show products in stock
-                </p>
-            </form>
-        );
-    }
-});
-
-var FilterableProductTable = React.createClass({
-    getInitialState: function() {
-        return {
-            filterText: '',
-            inStockOnly: false
-        };
-    },
-
-    render: function() {
-        return (
-            <div>
-                <SearchBar
-                    filterText={this.state.filterText}
-                    inStockOnly={this.state.inStockOnly}
-                />
-                <ProductTable
-                    products={this.props.products}
-                    filterText={this.state.filterText}
-                    inStockOnly={this.state.inStockOnly}
-                />
-            </div>
-        );
-    }
-});
-
-var rj=new Rj();
-rj.makeRequest("GET","http://www.reddit.com/r/eyes/.json?limit=5",function(x,y){
-  var chil=x.data.children;
-  console.log(chil);
-  React.renderComponent(<MainUL products={chil}/>, document.body);
-});
-
-var PRODUCTS = [
-  {category: 'Sporting Goods', price: '$49.99', stocked: true, name: 'Football'},
-  {category: 'Sporting Goods', price: '$9.99', stocked: true, name: 'Baseball'},
-  {category: 'Sporting Goods', price: '$29.99', stocked: false, name: 'Basketball'},
-  {category: 'Electronics', price: '$99.99', stocked: true, name: 'iPod Touch'},
-  {category: 'Electronics', price: '$399.99', stocked: false, name: 'iPhone 5'},
-  {category: 'Electronics', price: '$199.99', stocked: true, name: 'Nexus 7'}
-];
