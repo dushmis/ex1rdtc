@@ -75,57 +75,50 @@ angular.module('components', [])
     };
   })
 
-angular.module('app', ['components'])
-
-.controller('NewsController', function($scope, $http, $templateCache, $interval, $timeout) {
-    $scope.method = 'GET';
-    // $scope.url = 'http://www.reddit.com/r/news/.json?limit=5';
-    $scope.source="worldnews+breakingnews+news";
-    $scope.predicate="ups";
-    $scope.predicate_="created";
-    $scope.ascorder=true;
-
-
-    $scope.fetch = function() {
-      var rows_news=[];
-      var rows_breakingnews=[];
-      $scope.url = 'http://www.reddit.com/r/'+$scope.source+'/.json?limit=50';
-      $scope.code = null;
-      $scope.response = null;
-
-      $http({method: $scope.method, url: $scope.url, cache: $templateCache}).
-      success(function(data, status) {
-        $scope.status = status;
-        data.data.children.forEach(function(a,b){
-          if(a.data.subreddit=="worldnews" || a.data.subreddit=="news"){
-            if(b<=20) rows_news.push(a.data);
+angular.module("app", ["components"]).controller("NewsController", function($scope, $http, $templateCache, $interval, $timeout) {
+  $scope.method = "GET";
+  $scope.source = "worldnews+breakingnews+news";
+  $scope.predicate = "ups";
+  $scope.predicate_ = "created";
+  $scope.ascorder = true;
+  $scope.fetch = function() {
+    var rows_news = [];
+    var rows_breakingnews = [];
+    $scope.url = "http://www.reddit.com/r/" + $scope.source + "/.json?limit=50";
+    $scope.code = null;
+    $scope.response = null;
+    $http({method:$scope.method, url:$scope.url, cache:$templateCache}).success(function(data, status) {
+      $scope.status = status;
+      data.data.children.forEach(function(a, b) {
+        if (a.data.subreddit == "worldnews" || a.data.subreddit == "news") {
+          if (b <= 20) {
+            rows_news.push(a.data);
           }
-          if(a.data.subreddit=="breakingnews"){
-             if(b<=20) rows_breakingnews.push(a.data);
+        }
+        if (a.data.subreddit == "breakingnews") {
+          if (b <= 20) {
+            rows_breakingnews.push(a.data);
           }
-          console.log(a.data.subreddit);
-        });
-        $scope.allnews=rows_news;
-        $scope.allbreakingnews=rows_breakingnews;
-        
-        console.log(data.data.children);
-      }).
-      error(function(data, status) {
-        $scope.allnews = data || "Request failed";
-        $scope.allbreakingnews = data || "Request failed";
-        $scope.status = status;
+        }
+        console.log(a.data.subreddit);
       });
-    };
-
-    stop=$interval(function(){
-      $scope.fetch();
-    },30000);
-    console.log(stop);
-
-    stop_timeout=$timeout(function(){
-      $scope.fetch();
-      console.log("timeout executed");
-    },100);
+      $scope.allnews = rows_news;
+      $scope.allbreakingnews = rows_breakingnews;
+      console.log(data.data.children);
+    }).error(function(data, status) {
+      $scope.allnews = data || "Request failed";
+      $scope.allbreakingnews = data || "Request failed";
+      $scope.status = status;
+    });
+  };
+  stop = $interval(function() {
+    $scope.fetch();
+  }, 3E4);
+  console.log(stop);
+  stop_timeout = $timeout(function() {
+    $scope.fetch();
+    console.log("timeout executed");
+  }, 100);
 });
 
 
