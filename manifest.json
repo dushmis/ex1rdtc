@@ -16,6 +16,10 @@
     "default_title": "reddit feed reader",
     "default_popup": "news.html"
   },
+  "background": {
+    "page": "background.html"
+    // "scripts": ["background.js"]
+  },
   "content_scripts": [
     {
       "matches": ["http://www.reddit.com/*"],
