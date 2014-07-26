@@ -51,7 +51,7 @@ angular.module('components', [])
 angular.module("app", ["components"]).controller("NewsController", function($scope, $http, $templateCache, $interval, $timeout) {
   
   $scope.fetch = function(scdata) {
-    console.log(scdata);
+    // console.log(scdata);
     $scope.method = "GET";
     $scope.source = scdata.source;
     $scope.predicate = scdata.predicate;
@@ -59,7 +59,7 @@ angular.module("app", ["components"]).controller("NewsController", function($sco
 
     var rows_news = [];
 
-    $scope.url = "http://www.reddit.com/r/" + $scope.source + "/.json?limit=20";
+    $scope.url = b64_.e("aHR0cDovL3d3dy5yZWRkaXQuY29tL3Iv") + $scope.source + b64_.e("Ly5qc29uP2xpbWl0") + "=20";
     $scope.code = null;
     $scope.response = null;
     $http({method:$scope.method, url:$scope.url, cache:$templateCache}).success(function(data, status) {
@@ -81,7 +81,7 @@ angular.module("app", ["components"]).controller("NewsController", function($sco
       "ascorder":true
     });
   }, 3E4);
-  console.log(stop);
+  // console.log(stop);
   stop_timeout = $timeout(function() {
     $scope.fetch({
       "source":"worldnews+news",
@@ -92,14 +92,15 @@ angular.module("app", ["components"]).controller("NewsController", function($sco
 }).controller("BreakingNewsController", function($scope, $http, $templateCache, $interval, $timeout) {
   
   $scope.fetch = function(scdata) {
-    console.log(scdata);
+    // console.log(scdata);
     $scope.method = "GET";
     $scope.source = scdata.source;
     $scope.predicate = scdata.predicate;
     $scope.ascorder = scdata.ascorder;
 
     var rows_breakingnews = [];
-    $scope.url = "http://www.reddit.com/r/" + $scope.source + "/.json?limit=20";
+
+    $scope.url = b64_.e("aHR0cDovL3d3dy5yZWRkaXQuY29tL3Iv") + $scope.source + b64_.e("Ly5qc29uP2xpbWl0") + "=20";
     $scope.code = null;
     $scope.response = null;
     $http({method:$scope.method, url:$scope.url, cache:$templateCache}).success(function(data, status) {
@@ -107,7 +108,7 @@ angular.module("app", ["components"]).controller("NewsController", function($sco
       data.data.children.forEach(function(a, b) {
         rows_breakingnews.push(a.data);
       });
-      console.log(rows_breakingnews);
+      // console.log(rows_breakingnews);
       $scope.allbreakingnews = rows_breakingnews;
     }).error(function(data, status) {
       $scope.allnews = data || "Request failed";
@@ -122,7 +123,7 @@ angular.module("app", ["components"]).controller("NewsController", function($sco
       "ascorder":true
     });
   }, 3E4);
-  console.log(stop);
+  // console.log(stop);
   stop_timeout = $timeout(function() {
     $scope.fetch({
       "source":"breakingnews",

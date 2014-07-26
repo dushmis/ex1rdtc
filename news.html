@@ -32,20 +32,21 @@ padding: 11px;
   <tabs>
     <pane title="Worldnews">
       <div ng-controller="NewsController">
-        <div data-read={{newstory}} ng-repeat="newstory in allnews | orderBy:predicate_:ascorder" class="midnews">
+        <div data-read={{newstory.id}} ng-repeat="newstory in allnews | orderBy:predicate_:ascorder" class="midnews">
           &dash; <a class="midnews-text" href={{newstory.url}} target="_blank" >{{newstory.title}}</a> &mdash; <span class="midnews-date">{{newstory.created*1000 | date:'fullDate'}}</span>
         </div>
       </div>
     </pane>
     <pane title="Breakingnews">
       <div ng-controller="BreakingNewsController">
-        <div data-read={{newstory}} ng-repeat="newstory in allbreakingnews | orderBy:predicate:ascorder" class="midnews">
+        <div data-read={{newstory.id}} ng-repeat="newstory in allbreakingnews | orderBy:predicate:ascorder" class="midnews">
           &dash; <a class="midnews-text" href={{newstory.url}} target="_blank" >{{newstory.title}}</a> &mdash; <span class="midnews-date">{{newstory.created*1000 | date:'fullDate'}}</span>
         </div>
       </div>
     </pane>
   </tabs>
 </div>
+<script type="text/javascript" src="app_base.js"></script>
 <script src="angular.min.js"></script>
   <script src="app.js"></script>
 </body>
