@@ -1,4 +1,4 @@
-angular.module("app", []).controller("BackgroundFetchController", function($scope, $http, $templateCache, $interval, $timeout) {  
+angular.module("app", []).controller("BackgroundFetchController", function($scope, $http, $templateCache, $interval) {  
   $scope.fetch = function(scdata) {
     $scope.method = "GET";
     $scope.source = scdata.source;

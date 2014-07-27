@@ -67,7 +67,7 @@ angular.module('components', [])
 
 var app=angular.module("app", ["components"]);
 
-  app.controller("NewsController", function($scope, $http, $templateCache, $interval, $timeout) {
+  app.controller("NewsController", function($scope, $timeout) {
   $scope.fetch = function(scdata) {
     $scope.source = scdata.source;
     $scope.predicate = scdata.predicate;
@@ -85,7 +85,7 @@ var app=angular.module("app", ["components"]);
       "ascorder":true
     });
   }, 1);
-}).controller("BreakingNewsController", function($scope, $http, $templateCache, $interval, $timeout) {
+}).controller("BreakingNewsController", function($scope, $timeout) {
   
   $scope.fetch = function(scdata) {
     $scope.source = scdata.source;
