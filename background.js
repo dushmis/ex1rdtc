@@ -24,6 +24,8 @@ angular.module("app", []).controller("BackgroundFetchController", function($scop
       	chrome.browserAction.setBadgeText({text:"1"});
       	window.localStorage.setItem($scope.source,stringed);
       	window.localStorage.setItem($scope.source+"_sha",sha1(stringed));
+      }else{
+        // chrome.browserAction.setBadgeText({text:""});
       }
     }).error(function(data, status) {
       $scope.status = status;
@@ -35,16 +37,28 @@ angular.module("app", []).controller("BackgroundFetchController", function($scop
       "predicate":"ups",
       "ascorder":true
     });
-  }, 30976);
+  }, 3976);
   stop = $interval(function() {
     $scope.fetch({
       "source":"breakingnews",
       "predicate":"ups",
       "ascorder":true
     });
-  }, 20660);
+  }, 2660);
 
 });
 
+var removeNotifications=function(){
+    if(chrome.browserAction && chrome.browserAction.onClicked) // you can add all stuff that you need.        
+      chrome.browserAction.setBadgeText({"text": ""});
+}
 
+  // var counter = 0;
 
+  // chrome.browserAction.onClicked.addListener(function(tab) {
+  //   alert("clicked");
+  //   counter++;
+  //   chrome.browserAction.setBadgeText({"text": "" + counter});
+  // });
+
+  // chrome.browserAction.setBadgeText({"text": "" + counter});

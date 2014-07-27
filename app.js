@@ -106,4 +106,4 @@ var app=angular.module("app", ["components"]);
     });
   }, 1);
 });
-
+chrome.extension.getBackgroundPage().removeNotifications();
