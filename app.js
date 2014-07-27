@@ -71,7 +71,7 @@ var app=angular.module("app", ["components"]);
   $scope.fetch = function(scdata) {
     $scope.source = scdata.source;
     $scope.predicate = scdata.predicate;
-    $scope.ascorder = scdata.ascorder;
+    $scope.order = scdata.order;
 
     var lolst=window.localStorage.getItem($scope.source);
     if(lolst){
@@ -82,7 +82,7 @@ var app=angular.module("app", ["components"]);
     $scope.fetch({
       "source":"worldnews+news",
       "predicate":"ups",
-      "ascorder":true
+      "order":true
     });
   }, 1);
 }).controller("BreakingNewsController", function($scope, $timeout) {
@@ -90,7 +90,7 @@ var app=angular.module("app", ["components"]);
   $scope.fetch = function(scdata) {
     $scope.source = scdata.source;
     $scope.predicate = scdata.predicate;
-    $scope.ascorder = scdata.ascorder;
+    $scope.order = scdata.order;
 
 
     var lolst=window.localStorage.getItem($scope.source);
@@ -102,7 +102,7 @@ var app=angular.module("app", ["components"]);
     $scope.fetch({
       "source":"breakingnews",
       "predicate":"created",
-      "ascorder":true
+      "order":true
     });
   }, 1);
 });
