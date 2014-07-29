@@ -1,51 +1,96 @@
 var appmod = angular.module("app", []);
 
-appmod.factory("Item",function(){
-  var Item={
+
+appmod.factory("ItemFactory",function(){
+  return {
     getStorage:function(){
       return window.localStorage;
+    },
+    get:function(name){
+      return this.getStorage().getItem(name);
+    },
+    save:function(name,value){
+      this.getStorage().setItem(name,value);
+      this.setSha(name,value);
+    },
+    setSha:function(name,value){
+      //may be remove the sha concept later
+      this.getStorage().setItem(name+"_sha",sha1(value));
+    },
+    getSha:function(name){
+      return this.get(name+"_sha");
     }
   };
-  return Item;
 });
 
-appmod.controller("BackgroundFetchController", function($scope, $http, $templateCache, $interval, Item) {  
+var channel=function(data){
+  this.source=data.source;
+  this.predicate=data.predicate;
+  this.ascorder=data.ascorder;
+}
+
+appmod.constant("dushyant",{name:"haha"});
+
+appmod.factory("EventFactory",function(){
+  return {
+    onChange:function(value){
+        chrome.browserAction.getBadgeText({},function(result){
+          chrome.browserAction.setBadgeText({text:(+result+1)+""});
+        });
+    },
+    onFetch:function(){
+      // console.log("fetch");
+    },
+    onError:function(something){
+      console.error(something);
+    }
+  };
+});
+
+appmod.factory("ChannelFactory",function(ItemFactory){
+  var channels=ItemFactory.get("channels");
+  console.log(channels?true:false);
+});
+
+
+appmod.controller("BackgroundFetchController", function($scope, $http, $templateCache, $interval, ItemFactory, EventFactory, dushyant,ChannelFactory) {  
   $scope.fetch = function(scdata) {
-    
+    console.log(dushyant);
+    console.log(ChannelFactory);
 
     $scope.method = "GET";
     $scope.source = scdata.source;
     $scope.predicate = scdata.predicate;
     $scope.ascorder = scdata.ascorder;
 
+    EventFactory.onFetch();
+
 
     var rows_news = [];
     $scope.url = b64_.e("aHR0cDovL3d3dy5yZWRkaXQuY29tL3Iv") + $scope.source + b64_.e("Ly5qc29uP2xpbWl0") + "=20";
     $scope.code = null;
     $scope.response = null;
+
     $http({method:$scope.method, url:$scope.url, cache:$templateCache}).success(function(data, status) {
       $scope.status = status;
       data.data.children.forEach(function(a, b) {
         rows_news.push(a.data);
       });
       var stringed=JSON.stringify(rows_news);
-      var stringed_data=Item.getStorage().getItem($scope.source+"_sha");
-      
+      var stringed_data=ItemFactory.getSha($scope.source);
+
       var tosave= !(angular.equals(stringed_data,sha1(stringed)));
 
       if(tosave){
-        chrome.browserAction.getBadgeText({},function(result){
-          chrome.browserAction.setBadgeText({text:(+result+1)+""});
-        });
-      	Item.getStorage().setItem($scope.source,stringed);
-      	Item.getStorage().setItem($scope.source+"_sha",sha1(stringed));
-      }else{
-        // chrome.browserAction.setBadgeText({text:""});
+        EventFactory.onChange({});
+      	ItemFactory.save($scope.source,stringed);
       }
     }).error(function(data, status) {
       $scope.status = status;
+      EventFactory.onError(status);
     });
   };
+
   stop = $interval(function() {
     $scope.fetch({
       "source":"worldnews+news",
@@ -63,8 +108,8 @@ appmod.controller("BackgroundFetchController", function($scope, $http, $template
 
 });
 
-
+// app.js uses this.
 var removeNotifications=function(){
-    if(chrome.browserAction && chrome.browserAction.onClicked) // you can add all stuff that you need.        
+    if(chrome.browserAction && chrome.browserAction.onClicked)
       chrome.browserAction.setBadgeText({"text": ""});
 }
