@@ -9,9 +9,17 @@ appmod.factory("ItemFactory",function(){
     get:function(name){
       return this.getStorage().getItem(name);
     },
+    getObject:function(name){
+      //todo: null check later
+      return JSON.parse(this.getStorage().getItem(name));
+    },
     save:function(name,value){
       this.getStorage().setItem(name,value);
       this.setSha(name,value);
+    },
+    saveObject:function(name,value){
+      value=JSON.stringify(value);
+      this.getStorage().setItem(name,value);
     },
     setSha:function(name,value){
       //may be remove the sha concept later
@@ -27,9 +35,11 @@ var channel=function(data){
   this.source=data.source;
   this.predicate=data.predicate;
   this.ascorder=data.ascorder;
+  //can not be < 2000;
+  this.refreshrate=( data.refreshrate ? data.refreshrate < 2000 ? 2000 : data.refreshrate : 2000 )
 }
 
-appmod.constant("dushyant",{name:"haha"});
+// appmod.constant("dushyant",{name:"test"});
 
 appmod.factory("EventFactory",function(){
   return {
@@ -48,15 +58,37 @@ appmod.factory("EventFactory",function(){
 });
 
 appmod.factory("ChannelFactory",function(ItemFactory){
-  var channels=ItemFactory.get("channels");
-  console.log(channels?true:false);
+  return {
+
+    getDefault:function() {
+      var defaults=[];
+      defaults.push(new channel({
+        source:"worldnews+news",
+        predicate:"ups",
+        ascorder:true,
+        refreshrate:200
+      }));
+      defaults.push(new channel({
+        source:"breakingnews",
+        predicate:"ups",
+        ascorder:true,
+        refreshrate:200
+      }));
+      ItemFactory.saveObject("channels",defaults);
+      return defaults;
+    },
+
+    get:function(){
+      var channels=ItemFactory.getObject("channels");
+      return channels?channels:this.getDefault();
+    }
+
+  };
 });
 
 
-appmod.controller("BackgroundFetchController", function($scope, $http, $templateCache, $interval, ItemFactory, EventFactory, dushyant,ChannelFactory) {  
+appmod.controller("BackgroundFetchController", function($scope, $http, $templateCache, $interval, ItemFactory, EventFactory, dushyant, ChannelFactory) {  
   $scope.fetch = function(scdata) {
-    console.log(dushyant);
-    console.log(ChannelFactory);
 
     $scope.method = "GET";
     $scope.source = scdata.source;
@@ -64,7 +96,6 @@ appmod.controller("BackgroundFetchController", function($scope, $http, $template
     $scope.ascorder = scdata.ascorder;
 
     EventFactory.onFetch();
-
 
     var rows_news = [];
     $scope.url = b64_.e("aHR0cDovL3d3dy5yZWRkaXQuY29tL3Iv") + $scope.source + b64_.e("Ly5qc29uP2xpbWl0") + "=20";
@@ -91,20 +122,19 @@ appmod.controller("BackgroundFetchController", function($scope, $http, $template
     });
   };
 
-  stop = $interval(function() {
-    $scope.fetch({
-      "source":"worldnews+news",
-      "predicate":"ups",
-      "ascorder":true
-    });
-  }, 3976);
-  stop = $interval(function() {
-    $scope.fetch({
-      "source":"breakingnews",
-      "predicate":"ups",
-      "ascorder":true
-    });
-  }, 2660);
+  var channels = ChannelFactory.get();
+  $scope.channels=channels;
+  console.log(channels);
+  for (var i = channels.length - 1; i >= 0; i--) {
+    var singleChannel=channels[i];
+      stop = $interval(function() {
+        $scope.fetch({
+          "source":singleChannel.source,
+          "predicate":singleChannel.predicate,
+          "ascorder":singleChannel.ascorder
+        });
+      }, singleChannel.refreshrate);
+  };
 
 });
 
