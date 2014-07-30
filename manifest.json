@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
 
-  "name": "reddit feed reader",
-  "description": "reddit feed reader",
+  "name": "Quick News reader",
+  "description": "Quick News reader",
   "version": "1.0",
   "icons": { "16": "icon16.png",
            "48": "icon48.png",
