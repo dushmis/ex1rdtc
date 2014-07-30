@@ -87,7 +87,7 @@ appmod.factory("ChannelFactory",function(ItemFactory){
 });
 
 
-appmod.controller("BackgroundFetchController", function($scope, $http, $templateCache, $interval, ItemFactory, EventFactory, dushyant, ChannelFactory) {  
+appmod.controller("BackgroundFetchController", function($scope, $http, $templateCache, $interval, ItemFactory, EventFactory, ChannelFactory) {  
   $scope.fetch = function(scdata) {
 
     $scope.method = "GET";
