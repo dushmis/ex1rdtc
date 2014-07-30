@@ -48,8 +48,8 @@ appmod.factory("EventFactory",function(){
           chrome.browserAction.setBadgeText({text:(+result+1)+""});
         });
     },
-    onFetch:function(){
-      // console.log("fetch");
+    onFetch:function(data){
+       console.log("fetch ");
     },
     onError:function(something){
       console.error(something);
@@ -94,8 +94,10 @@ appmod.controller("BackgroundFetchController", function($scope, $http, $template
     $scope.source = scdata.source;
     $scope.predicate = scdata.predicate;
     $scope.ascorder = scdata.ascorder;
+    
+    //console.log(scdata);
 
-    EventFactory.onFetch();
+    EventFactory.onFetch($scope.source);
 
     var rows_news = [];
     $scope.url = b64_.e("aHR0cDovL3d3dy5yZWRkaXQuY29tL3Iv") + $scope.source + b64_.e("Ly5qc29uP2xpbWl0") + "=20";
@@ -126,17 +128,26 @@ appmod.controller("BackgroundFetchController", function($scope, $http, $template
   $scope.channels=channels;
   console.log(channels);
   for (var i = channels.length - 1; i >= 0; i--) {
-    var singleChannel=channels[i];
-      stop = $interval(function() {
+    (function(singleChannel){
+      stop = $interval(function(){
         $scope.fetch({
           "source":singleChannel.source,
           "predicate":singleChannel.predicate,
           "ascorder":singleChannel.ascorder
         });
-      }, singleChannel.refreshrate);
+      }, singleChannel.refreshrate+i);    
+    })(channels[i]);
   };
 
 });
+
+var ffunc=function(data){
+  this.data=data;
+};
+
+ffunc.prototype.get=function(func){
+  return func(this.data);
+};
 
 // app.js uses this.
 var removeNotifications=function(){
