@@ -33,14 +33,14 @@ padding: 11px;
     <pane title="Worldnews">
       <div ng-controller="NewsController">
         <div data-read={{newstory.id}} ng-repeat="newstory in allnews | orderBy:predicate:order" class="midnews">
-          &dash; <a class="midnews-text" href={{newstory.url}} target="_blank" >{{newstory.title}}</a> &mdash; <span class="midnews-date">{{newstory.created*1000 | date:'fullDate'}}</span>
+          &dash; <a class="midnews-text" href={{newstory.url}} target="_blank" >{{newstory.title}}</a> &mdash; <span class="midnews-date">{{newstory.created*1000 | date:'fullDate'}}</span>&mdash;<span> <a target="_blank" href={{'https://twitter.com/intent/tweet?text='+newstory.title}}><img src="twt.gif"></a></span>
         </div>
       </div>
     </pane>
     <pane title="Breakingnews">
       <div ng-controller="BreakingNewsController">
         <div data-read={{newstory.id}} ng-repeat="newstory in allbreakingnews | orderBy:predicate:order" class="midnews">
-          &dash; <a class="midnews-text" href={{newstory.url}} target="_blank" >{{newstory.title}}</a> &mdash; <span class="midnews-date">{{newstory.created*1000 | date:'fullDate'}}</span>
+        &dash; <a class="midnews-text" href={{newstory.url}} target="_blank" >{{newstory.title}}</a> &mdash; <span class="midnews-date">{{newstory.created*1000 | date:'fullDate'}}</span>&mdash;<span> <a target="_blank" href={{'https://twitter.com/intent/tweet?text='+newstory.title}}><img src="twt.gif"></a></span>
         </div>
       </div>
     </pane>

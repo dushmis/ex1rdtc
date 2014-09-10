@@ -17,6 +17,10 @@ appmod.factory("ItemFactory",function(){
       this.getStorage().setItem(name,value);
       this.setSha(name,value);
     },
+    saveWithDiffSha:function(name,value,shagen){
+      this.getStorage().setItem(name,value);
+      this.setSha(name,shagen);
+    },
     saveObject:function(name,value){
       value=JSON.stringify(value);
       this.getStorage().setItem(name,value);
@@ -45,7 +49,8 @@ appmod.factory("EventFactory",function(){
   return {
     onChange:function(value){
         chrome.browserAction.getBadgeText({},function(result){
-          chrome.browserAction.setBadgeText({text:(+result+1)+""});
+          //chrome.browserAction.setBadgeText({text:(+result+1)+""});
+          chrome.browserAction.setBadgeText({text:"New"});
         });
     },
     onFetch:function(data){
@@ -66,13 +71,13 @@ appmod.factory("ChannelFactory",function(ItemFactory){
         source:"worldnews+news",
         predicate:"ups",
         ascorder:true,
-        refreshrate:200
+        refreshrate:300
       }));
       defaults.push(new channel({
         source:"breakingnews",
-        predicate:"ups",
+        predicate:"created",
         ascorder:true,
-        refreshrate:200
+        refreshrate:300
       }));
       ItemFactory.saveObject("channels",defaults);
       return defaults;
@@ -100,7 +105,8 @@ appmod.controller("BackgroundFetchController", function($scope, $http, $template
     EventFactory.onFetch($scope.source);
 
     var rows_news = [];
-    $scope.url = b64_.e("aHR0cDovL3d3dy5yZWRkaXQuY29tL3Iv") + $scope.source + b64_.e("Ly5qc29uP2xpbWl0") + "=20";
+    var t=(new Date()).getTime();
+    $scope.url = b64_.e("aHR0cDovL3d3dy5yZWRkaXQuY29tL3Iv") + $scope.source + b64_.e("Ly5qc29uP2xpbWl0") + "=20&tmp="+t;
     $scope.code = null;
     $scope.response = null;
 
@@ -127,8 +133,9 @@ appmod.controller("BackgroundFetchController", function($scope, $http, $template
   var channels = ChannelFactory.get();
   $scope.channels=channels;
   console.log(channels);
-  for (var i = channels.length - 1; i >= 0; i--) {
+  for (var i = 0; i <= channels.length - 1; i++) {
     (function(singleChannel){
+      console.log("sing " + i +  singleChannel);
       stop = $interval(function(){
         $scope.fetch({
           "source":singleChannel.source,
