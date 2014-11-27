@@ -15,7 +15,7 @@ appmod.factory("ItemFactory",function(){
     },
     save:function(name,value){
       this.getStorage().setItem(name,value);
-      this.setSha(name,value);
+      this.setSha(name,this.findSha(value));
     },
     saveWithDiffSha:function(name,value,shagen){
       this.getStorage().setItem(name,value);
@@ -27,13 +27,39 @@ appmod.factory("ItemFactory",function(){
     },
     setSha:function(name,value){
       //may be remove the sha concept later
-      this.getStorage().setItem(name+"_sha",sha1(value));
+      this.getStorage().setItem(name+"_sha",value);
     },
     getSha:function(name){
       return this.get(name+"_sha");
+    },
+    findSha:function(data){
+
+      // console.log(data);
+      var error=false;
+      try {
+        data=JSON.parse(data);
+      }
+      catch(err) {
+        console.log("error json" + data)
+        error=true;
+      }
+      if(error){
+        return data;
+      }
+
+      // console.log(data);
+      var sha="";
+      for(var i=0;i<data.length;i++){
+        sha+=data[i].title;
+      }
+      return sha1(sha);
     }
   };
 });
+
+
+
+
 
 var channel=function(data){
   this.source=data.source;
@@ -68,7 +94,7 @@ appmod.factory("ChannelFactory",function(ItemFactory){
     getDefault:function() {
       var defaults=[];
       defaults.push(new channel({
-        source:"worldnews+news",
+        source:"worldnews",
         predicate:"ups",
         ascorder:true,
         refreshrate:300
@@ -117,8 +143,9 @@ appmod.controller("BackgroundFetchController", function($scope, $http, $template
       });
       var stringed=JSON.stringify(rows_news);
       var stringed_data=ItemFactory.getSha(scdata.source);
-
-      var tosave= !(angular.equals(stringed_data,sha1(stringed)));
+      
+      var stringed_=ItemFactory.findSha(stringed);
+      var tosave= !(angular.equals(stringed_data,stringed_));
       dowhat(scdata.source);
 
       if(tosave){

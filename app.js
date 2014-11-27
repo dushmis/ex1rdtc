@@ -68,38 +68,38 @@ angular.module('components', [])
 var app=angular.module("app", ["components"]);
 
   app.controller("NewsController", function($scope, $timeout) {
-  $scope.fetch = function(scdata) {
+  $scope.fetch_ = function(scdata) {
     $scope.source = scdata.source;
     $scope.predicate = scdata.predicate;
     $scope.order = scdata.order;
 
-    var lolst=window.localStorage.getItem($scope.source);
+    var lolst=window.localStorage.getItem(scdata.source);
     if(lolst){
       $scope.allnews=JSON.parse(lolst);
     }
   };
   stop_timeout = $timeout(function() {
-    $scope.fetch({
-      "source":"worldnews+news",
+    $scope.fetch_({
+      "source":"worldnews",
       "predicate":"ups",
       "order":true
     });
   }, 1);
 }).controller("BreakingNewsController", function($scope, $timeout) {
-  
-  $scope.fetch = function(scdata) {
+
+  $scope.fetch_ = function(scdata) {
     $scope.source = scdata.source;
     $scope.predicate = scdata.predicate;
     $scope.order = scdata.order;
 
 
-    var lolst=window.localStorage.getItem($scope.source);
+    var lolst=window.localStorage.getItem(scdata.source);
     if(lolst){
       $scope.allbreakingnews=JSON.parse(lolst);
     }
   };
   stop_timeout = $timeout(function() {
-    $scope.fetch({
+    $scope.fetch_({
       "source":"breakingnews",
       "predicate":"created",
       "order":true
