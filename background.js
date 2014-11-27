@@ -58,9 +58,6 @@ appmod.factory("ItemFactory",function(){
 });
 
 
-
-
-
 var channel=function(data){
   this.source=data.source;
   this.predicate=data.predicate;
@@ -143,7 +140,7 @@ appmod.controller("BackgroundFetchController", function($scope, $http, $template
       });
       var stringed=JSON.stringify(rows_news);
       var stringed_data=ItemFactory.getSha(scdata.source);
-      
+
       var stringed_=ItemFactory.findSha(stringed);
       var tosave= !(angular.equals(stringed_data,stringed_));
       dowhat(scdata.source);
