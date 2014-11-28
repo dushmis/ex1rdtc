@@ -1,17 +1,32 @@
-<html class="html">
-<head>
-	<title>Options</title>
-	<style type="text/css">
-	html{
-		padding:20px;
-		margin:20px;
-	}
-	div.placeholderoption{
-		text-align: center;
-	}
-	</style>
-</head>
-<body>
-	<div class="placeholderoption">This is option page.</div>
-</body>
+<html class="html" ng-app="app" ng-csp="">
+  <head>
+    <title>Options</title>
+    <style type="text/css">
+      html{
+        padding:20px;
+        margin:20px;
+      }
+      div.placeholderoption{
+        text-align: center;
+      }
+    </style>
+<link rel="stylesheet" href="https://angularjs.org/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div class="placeholderoption">This is option page.</div>
+    <div ng-controller="OptionContoller">
+      <ul>
+        <li ng-repeat="channels in SavedChannels">{{channels.source}}</li>
+        <form ng-submit="addToChannels()">
+        <input type="text" ng-model="ChanTest"  size="30"
+               placeholder="add new todo here">
+        <input class="btn-primary" type="submit" value="add">
+      </form>
+      </ul>
+    </div>
+    <script type="text/javascript" src="app_base.js"></script>
+    <script type="text/javascript" src="sha1.js"></script>
+    <script src="angular.min.js"></script>
+    <script src="app.js"></script>
+  </body>
 </html>

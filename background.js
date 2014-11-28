@@ -33,21 +33,16 @@ appmod.factory("ItemFactory",function(){
       return this.get(name+"_sha");
     },
     findSha:function(data){
-
-      // console.log(data);
       var error=false;
       try {
-        data=JSON.parse(data);
-      }
-      catch(err) {
-        console.log("error json" + data)
-        error=true;
+        data = JSON.parse(data);
+      } catch (err) {
+        error = true;
       }
       if(error){
         return data;
       }
 
-      // console.log(data);
       var sha="";
       for(var i=0;i<data.length;i++){
         sha+=data[i].title;
@@ -63,16 +58,14 @@ var channel=function(data){
   this.predicate=data.predicate;
   this.ascorder=data.ascorder;
   //can not be < 2000;
-  this.refreshrate=( data.refreshrate ? data.refreshrate < 2000 ? 2000 : data.refreshrate : 2000 )
+  this.refreshrate=( data.refreshrate ? data.refreshrate < 2E3 ? 2E3 : data.refreshrate : 2E3 )
 }
 
 
 appmod.factory("EventFactory",function(){
   return {
     onChange:function(value){
-        // console.info("change %s",value);
         chrome.browserAction.getBadgeText({},function(result){
-          //chrome.browserAction.setBadgeText({text:(+result+1)+""});
           chrome.browserAction.setBadgeText({text:"New"});
         });
     },
@@ -94,13 +87,13 @@ appmod.factory("ChannelFactory",function(ItemFactory){
         source:"worldnews",
         predicate:"ups",
         ascorder:true,
-        refreshrate:300
+        refreshrate:30000
       }));
       defaults.push(new channel({
         source:"breakingnews",
         predicate:"created",
         ascorder:true,
-        refreshrate:300
+        refreshrate:30000
       }));
       ItemFactory.saveObject("channels",defaults);
       return defaults;
@@ -123,8 +116,6 @@ appmod.controller("BackgroundFetchController", function($scope, $http, $template
     $scope.predicate = scdata.predicate;
     $scope.ascorder = scdata.ascorder;
 
-    // console.log("object %s",scdata);
-
     EventFactory.onFetch(scdata.source);
 
     var rows_news = [];
@@ -142,6 +133,7 @@ appmod.controller("BackgroundFetchController", function($scope, $http, $template
       var stringed_data=ItemFactory.getSha(scdata.source);
 
       var stringed_=ItemFactory.findSha(stringed);
+      //console.log("%s - %s",scdata.source,stringed_);
       var tosave= !(angular.equals(stringed_data,stringed_));
       dowhat(scdata.source);
 
@@ -157,10 +149,10 @@ appmod.controller("BackgroundFetchController", function($scope, $http, $template
 
   var channels = ChannelFactory.get();
   $scope.channels=channels;
-  // console.log(channels);
+  
   for (var i = 0; i <= channels.length - 1; i++) {
     (function(singleChannel){
-      // console.log("sing " + i +  singleChannel + " " + (singleChannel.refreshrate+(i+1)*10));
+      
       stop = $interval(function(){
         $scope.fetch({
           "source":singleChannel.source,

@@ -5,31 +5,33 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href='http://fonts.googleapis.com/css?family=Merriweather:400,300italic' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/css/bootstrap-combined.min.css">
+<link rel="stylesheet" href="https://angularjs.org/css/bootstrap.min.css">
+
 
 
 <style>
-  .tab-content{
+  .tab-content {
     color: #222;
     font: 400 14px/18px "Merriweather";
     text-indent: 14px;
   }
-  .midnews{
+  .midnews {
     padding-top: 10px;
   }
-  span.midnews-date{
+  span.midnews-date {
     color:gray;
   }
   .tabbable {
-width: 500px;
-padding: 11px;
-}
+    width: 500px;
+    padding: 11px;
+  }
 </style>
   
 
 </head>
 <body>
   <div >
-  <tabs>
+  <tabs >
     <pane title="Worldnews">
       <div ng-controller="NewsController">
         <div data-read={{newstory.id}} ng-repeat="newstory in allnews | orderBy:predicate:order" class="midnews">
@@ -54,4 +56,5 @@ padding: 11px;
 
 
 </html>
+
 
