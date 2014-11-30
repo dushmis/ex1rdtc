@@ -167,14 +167,14 @@ app.factory("ItemFactory",function(){
       return sha1(sha);
     },
     saveChannel:function(channel){
-      
+
     },
   };
 });
 
 app.controller("OptionContoller", function($scope,ItemFactory) {
   $scope.SavedChannels=ItemFactory.getObject("channels");
-  
+
   $scope.addToChannels = function() {
     $scope.SavedChannels=ItemFactory.getObject("channels");
     $scope.SavedChannels.push({

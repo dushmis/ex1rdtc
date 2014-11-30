@@ -3,7 +3,7 @@
 
   "name": "Quicknews reader",
   "description": "Quicknews reader",
-  "version": "5",
+  "version": "6",
   "icons": { "16": "icon16.png",
            "48": "icon48.png",
           "128": "icon128.png" },
@@ -26,6 +26,6 @@
     }
   ],
   "content_security_policy": "script-src 'unsafe-eval' 'self' chrome-extension://gfkakpkpmdddibfhoahedokcflnipgal chrome-extension-resource:; object-src 'self'",
-  "options_page": "options.html",
-  "web_accessible_resources": ["twt.gif"]
+  /*"options_page": "options.html",*/
+  "web_accessible_resources": ["twt.gif","refresh-16.png"]
 }
